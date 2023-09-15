@@ -26,7 +26,7 @@ vk.py - бот ВК, TODO
 
 В провинции последними данными идет перечисление зданий, список зданий - config.BUILDINGS.
 
-Остальные данные идут в формате: population;urbanization;goods_cost;dev;
+Остальные данные идут в формате: province_id;state_id;province_name;population;urbanization;goods_cost;dev;
 
 urbanization хранится как целое число от 0 до 100, таким образом реальная урбанизация - urbanization / 100.
 goods_cost хранится как целое число, не меньшее нуля. Реальная средняя стоимость товаров - goods_cost / 100.

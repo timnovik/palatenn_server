@@ -1,4 +1,4 @@
-from config import URB_MUL, GC_MUL, SEP, BUILDINGS
+from config import *
 
 
 class Buildings:
@@ -32,9 +32,19 @@ class Buildings:
     def __copy__(self):
         return Buildings(str(self))
 
+    def impact(self, val, mode):
+        res = 0
+        for building in BUILDINGS:
+            res += self.__getattribute__(building) * BUILDINGS_IMPACT[building].get(val, (0, 0))[mode]
+        return res
+
 
 class Province:
-    def __init__(self, val, urb=0, goods_cost=0, dev=0, buildings=""):
+    def __init__(self, id, name, state, val, urb=0, goods_cost=0, dev=0, buildings=""):
+        self.id = id
+        self.name = name
+        self.state = state
+        self._pm_cap = 0
         if type(val) == list:
             self._pop, self._urban, self._goods_cost, self._dev = val[:-len(BUILDINGS)]
             self.buildings = Buildings(val[-len(BUILDINGS):])
@@ -58,45 +68,37 @@ class Province:
                 self._goods_cost = int(self._goods_cost)
 
     def __str__(self):
-        return SEP.join(map(str, [self._pop, self._urban, self._goods_cost, self._dev])) + ";" + str(self.buildings)
+        return SEP.join(map(str, [self.id, self.state.id, self.name, self._pop, self._urban, self._goods_cost, self._dev])) + ";" + str(self.buildings)
 
     def __getattr__(self, item):
-        if item == "pop_add_mod":
-            return 0
-        if item == "pop_mul_mod":
-            return 0
-        if item == "pop":
-            return (self._pop + self.pop_add_mod) * (1 + self.pop_mul_mod)
+        # Получение базовых значений
+        if item[0] == "_":
+            if item == "_pm":
+                return self.pop * self.urban * self.dev // URB_MUL
+            if item == "_tv":
+                return self.pm * self.urban * self.goods_cost // (URB_MUL * GC_MUL)
+            return self.__getattribute__(item)
 
-        if item == "urban_add_mod":
-            return 0
-        if item == "urban_mul_mod":
-            return 0
-        if item == "urban":
-            return (self._urban + self.urban_add_mod) * (1 + self.urban_mul_mod)
+        parsed_args = item.split("_")
+        if parsed_args[-1] not in ["base", "add", "mul", "total"]:
+            parsed_args.append("total")
+        field, mode = "_".join(parsed_args[:-1]), parsed_args[-1]
 
-        if item == "goods_cost_add_mod":
-            return 0
-        if item == "goods_cost_mul_mod":
-            return 0
-        if item == "goods_cost":
-            return (self._goods_cost + self.goods_cost_add_mod) * (1 + self.goods_cost_mul_mod)
-
-        if item == "dev_add_mod":
-            return 0
-        if item == "dev_mul_mod":
-            return 0
-        if item == "dev":
-            return (self._dev + self.dev_add_mod) * (1 + self.dev_mul_mod)
-
-        if item == "pm_add_mod":
-            return 0
-        if item == "pm_mul_mod":
-            return 0
-        if item == "pm":
-            return self.pop * self.urban * self.dev // URB_MUL
+        if mode == "base":
+            return self.__getattr__("_" + field)
+        if mode == "add":
+            return self.buildings.impact(field, 0)
+        if mode == "mul":
+            return self.buildings.impact(field, 1)
+        if mode == "total":
+            return ((self.__getattr__(field + "_base")
+                     + self.__getattr__(field + "_add"))
+                    * (ACC + self.__getattr__(field + "_mul")) // ACC)
+        raise AttributeError("Province attribute error: no attribute " + item)
 
 
 if __name__ == "__main__":
-    province = Province(16000, .22, 2.1, 6)
-    print(province.pm)
+    from state import State
+    state = State(0)
+    province = Province(0, "Grodvilk", state, 16000, .22, 2.1, 6)
+    print(province)
