@@ -1,9 +1,20 @@
+# NETWORK CONFIG
+HOST_IP = "127.0.0.1"
+HOST_PORT = 5000
+
+# DATABASE CONFIG
 SEP = ";"
 
+PROVINCE_DB = "data/provinces.csv"
+STATE_DB = "data/states.csv"
+REGION_DB = "data/regions.csv"
+
+# ACCURACY CONFIG
 ACC = 100      # точность вычисления процентных модификаторов
 URB_MUL = 100  # точность вычисления урбанизации
 GC_MUL = 100   # точность вычисления стоимости товаров
 
+# BUILDINGS CONFIG
 # для добавления нового здания НЕОБХОДИМО добавить его в этот список, даже если здание не влияет на экономику
 BUILDINGS_IMPACT = {
     "city": {"urban": (5, 0), "dev": (5, 0)},

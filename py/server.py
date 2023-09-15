@@ -15,5 +15,5 @@ def province_view(province_id):
 
 
 if __name__ == '__main__':
-    app.run(port=5000, host='127.0.0.1')
+    app.run(port=HOST_PORT, host=HOST_IP)
 

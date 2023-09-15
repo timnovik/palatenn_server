@@ -1,17 +1,13 @@
 from config import *
 from province import Province
 from state import State
+from trade import TradeRegion
+from db import *
 
-state = State(0)
-provinces = [
-    Province(0, 0, 16000, .22, 2.1, 6),
-    Province(1, 0, 10000, .17, 1.7, 4)
-]
 
-with open("data/provinces.csv", "w") as province_db:
-    for province in provinces:
-        print(province, file=province_db)
+states = load_states()
+regions = load_regions()
+provinces = load_provinces(states, regions)
 
-with open("data/provinces.csv", "r") as province_db:
-    for line in province_db.readlines():
-        print(Province(line))
+print(sum([p.tv for p in provinces.values()]))
+print(regions[0].tv())

@@ -27,7 +27,10 @@ class Buildings:
         return res
 
     def __str__(self):
-        return SEP.join(map(lambda building: str(self.__getattribute__(building)), BUILDINGS))
+        return SEP.join(map(lambda building: str(self.__getattribute__(building)), BUILDINGS)) + ";"
+
+    def __repr__(self):
+        return str(self)
 
     def __copy__(self):
         return Buildings(str(self))
@@ -40,24 +43,33 @@ class Buildings:
 
 
 class Province:
-    def __init__(self, val, state_id=0, pop=0, urb=0, goods_cost=0, dev=0, buildings=""):
+    def __init__(self, val, id=0, state_id=0, trade_id=0, pop=0, urb=0, goods_cost=0, dev=0, buildings=""):
+        self.state = None
+        self.region = None
         self._pm_cap = 0
         if type(val) == list:
-            self.id, self.state_id, self._pop, self._urban, self._goods_cost, self._dev = val[:-len(BUILDINGS)]
+            self.name = val[0]
+            self.id, self.state_id, self.trade_id, self._pop, self._urban, self._goods_cost, self._dev = val[1:-len(BUILDINGS)]
             self.buildings = Buildings(val[-len(BUILDINGS):])
 
-        elif type(val) == str:
+        elif type(val) == str and ";" in val:
+            val = val.strip()
+            if val[-1] == ";":
+                val = val[:-1]
             str_list = val.replace(",", ".").split(SEP)
-            if "." in str_list[3]:
-                str_list[3] = float(str_list[3]) * URB_MUL
+            self.name = str_list[0]
+            str_list.pop(0)
             if "." in str_list[4]:
-                str_list[4] = float(str_list[4]) * GC_MUL
-            self.id, self.state_id, self._pop, self._urban, self._goods_cost, self._dev, *buildings = map(int, str_list)
+                str_list[4] = float(str_list[4]) * URB_MUL
+            if "." in str_list[5]:
+                str_list[5] = float(str_list[5]) * GC_MUL
+            self.id, self.state_id, self.trade_id, self._pop, self._urban, self._goods_cost, self._dev, *buildings = map(int, str_list)
             self.buildings = Buildings(buildings)
 
         else:
-            self.id, self.state_id, self._pop, self._urban, self._goods_cost, self._dev, self.buildings = (
-                val, state_id, pop, urb, goods_cost, dev, Buildings(buildings))
+            self.name = val
+            self.id, self.state_id, self.trade_id, self._pop, self._urban, self._goods_cost, self._dev, self.buildings =\
+                (id, state_id, trade_id, pop, urb, goods_cost, dev, Buildings(buildings))
             if type(self._urban) == float:
                 self._urban *= URB_MUL
                 self._urban = int(self._urban)
@@ -66,7 +78,10 @@ class Province:
                 self._goods_cost = int(self._goods_cost)
 
     def __str__(self):
-        return SEP.join(map(str, [self.id, self.state_id, self._pop, self._urban, self._goods_cost, self._dev])) + ";" + str(self.buildings)
+        return SEP.join(map(str, [self.name, self.id, self.state_id, self.trade_id, self._pop, self._urban, self._goods_cost, self._dev])) + ";" + str(self.buildings)
+
+    def __repr__(self):
+        return str(self)
 
     def __getattr__(self, item):
         # Получение базовых значений
