@@ -40,26 +40,24 @@ class Buildings:
 
 
 class Province:
-    def __init__(self, id, name, state, val, urb=0, goods_cost=0, dev=0, buildings=""):
-        self.id = id
-        self.name = name
-        self.state = state
+    def __init__(self, val, state_id=0, pop=0, urb=0, goods_cost=0, dev=0, buildings=""):
         self._pm_cap = 0
         if type(val) == list:
-            self._pop, self._urban, self._goods_cost, self._dev = val[:-len(BUILDINGS)]
+            self.id, self.state_id, self._pop, self._urban, self._goods_cost, self._dev = val[:-len(BUILDINGS)]
             self.buildings = Buildings(val[-len(BUILDINGS):])
 
         elif type(val) == str:
             str_list = val.replace(",", ".").split(SEP)
-            if "." in str_list[1]:
-                str_list[1] = float(str_list[1]) * URB_MUL
-            if "." in str_list[2]:
-                str_list[2] = float(str_list[2]) * GC_MUL
-            self._pop, self._urban, self._goods_cost, self._dev, _buildings = map(int, str_list)
-            self.buildings = Buildings(_buildings)
+            if "." in str_list[3]:
+                str_list[3] = float(str_list[3]) * URB_MUL
+            if "." in str_list[4]:
+                str_list[4] = float(str_list[4]) * GC_MUL
+            self.id, self.state_id, self._pop, self._urban, self._goods_cost, self._dev, *buildings = map(int, str_list)
+            self.buildings = Buildings(buildings)
 
         else:
-            self._pop, self._urban, self._goods_cost, self._dev, self.buildings = val, urb, goods_cost, dev, Buildings(buildings)
+            self.id, self.state_id, self._pop, self._urban, self._goods_cost, self._dev, self.buildings = (
+                val, state_id, pop, urb, goods_cost, dev, Buildings(buildings))
             if type(self._urban) == float:
                 self._urban *= URB_MUL
                 self._urban = int(self._urban)
@@ -68,7 +66,7 @@ class Province:
                 self._goods_cost = int(self._goods_cost)
 
     def __str__(self):
-        return SEP.join(map(str, [self.id, self.state.id, self.name, self._pop, self._urban, self._goods_cost, self._dev])) + ";" + str(self.buildings)
+        return SEP.join(map(str, [self.id, self.state_id, self._pop, self._urban, self._goods_cost, self._dev])) + ";" + str(self.buildings)
 
     def __getattr__(self, item):
         # Получение базовых значений
@@ -95,10 +93,3 @@ class Province:
                      + self.__getattr__(field + "_add"))
                     * (ACC + self.__getattr__(field + "_mul")) // ACC)
         raise AttributeError("Province attribute error: no attribute " + item)
-
-
-if __name__ == "__main__":
-    from state import State
-    state = State(0)
-    province = Province(0, "Grodvilk", state, 16000, .22, 2.1, 6)
-    print(province)
