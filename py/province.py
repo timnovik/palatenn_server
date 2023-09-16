@@ -4,21 +4,22 @@ from config import *
 class Buildings:
     def __init__(self, data=()):
         if not data:
-            data = [0] * len(BUILDINGS)
+            data = [0] * len(BuildingEnum)
         if type(data) == Buildings:
             self.__init__(str(data))
             return
         if type(data) == str:
             data = list(map(int, data.split(SEP)))
-        for i in range(len(BUILDINGS)):
-            self.__setattr__(BUILDINGS[i], data[i])
+        for i in range(len(BuildingEnum)):
+            self.__setattr__(list(BuildingEnum)[i], data[i])
 
     def __iadd__(self, other):
         cnt = 1
         if SEP in other:
             other, cnt = other.split(SEP)
             cnt = int(cnt)
-        self.__setattr__(other, self.__getattribute__(other) + cnt)
+        other = BuildingEnum(other)
+        self.__setattr__(other, self.__getattr__(other) + cnt)
         return self
 
     def __add__(self, other):
@@ -27,7 +28,7 @@ class Buildings:
         return res
 
     def __str__(self):
-        return SEP.join(map(lambda building: str(self.__getattribute__(building)), BUILDINGS)) + ";"
+        return SEP.join(map(lambda building: str(self.__getattr__(building)), BuildingEnum)) + ";"
 
     def __repr__(self):
         return str(self)
@@ -35,22 +36,37 @@ class Buildings:
     def __copy__(self):
         return Buildings(str(self))
 
+    def __getattr__(self, item):
+        if type(item) == BuildingEnum:
+            item = item.name
+        return self.__getattribute__(item)
+
+    def __setattr__(self, key, value):
+        if type(key) == BuildingEnum:
+            key = key.name
+        self.__dict__[key] = value
+
     def impact(self, val, mode):
+        if type(val) == Province.Field:
+            val = val.name
         res = 0
-        for building in BUILDINGS:
-            res += self.__getattribute__(building) * BUILDINGS_IMPACT[building].get(val, (0, 0))[mode]
+        for building in BuildingEnum:
+            res += self.__getattr__(building) * BUILDINGS_IMPACT[building].get(val, (0, 0))[mode]
         return res
 
 
 class Province:
+    Field = ProvinceFieldEnum
+    Query = ProvinceQueryEnum
+
     def __init__(self, val, id=0, state_id=0, trade_id=0, pop=0, urb=0, goods_cost=0, dev=0, buildings=""):
         self.state = None
         self.region = None
         self._pm_cap = 0
         if type(val) == list:
             self.name = val[0]
-            self.id, self.state_id, self.trade_id, self._pop, self._urban, self._goods_cost, self._dev = val[1:-len(BUILDINGS)]
-            self.buildings = Buildings(val[-len(BUILDINGS):])
+            self.id, self.state_id, self.trade_id, self._pop, self._urban, self._goods_cost, self._dev = val[1:-len(BuildingEnum)]
+            self.buildings = Buildings(val[-len(BuildingEnum):])
 
         elif type(val) == str and ";" in val:
             val = val.strip()
@@ -59,10 +75,10 @@ class Province:
             str_list = val.replace(",", ".").split(SEP)
             self.name = str_list[0]
             str_list.pop(0)
-            if "." in str_list[4]:
-                str_list[4] = float(str_list[4]) * URB_MUL
-            if "." in str_list[5]:
-                str_list[5] = float(str_list[5]) * GC_MUL
+            if "." in str_list[URB_POS]:
+                str_list[URB_POS] = float(str_list[URB_POS]) * URB_MUL
+            if "." in str_list[GC_POS]:
+                str_list[GC_POS] = float(str_list[GC_POS]) * GC_MUL
             self.id, self.state_id, self.trade_id, self._pop, self._urban, self._goods_cost, self._dev, *buildings = map(int, str_list)
             self.buildings = Buildings(buildings)
 
@@ -84,26 +100,26 @@ class Province:
         return str(self)
 
     def __getattr__(self, item):
-        # Получение базовых значений
         if item[0] == "_":
-            if item == "_pm":
+            if item == "_" + Province.Field.pm.name:
                 return self.pop * self.urban * self.dev // URB_MUL
-            if item == "_tv":
+            if item == "_" + Province.Field.tv.name:
                 return self.pm_base * self.urban * self.goods_cost // (URB_MUL * GC_MUL)
             return self.__getattribute__(item)
 
-        parsed_args = item.split("_")
-        if parsed_args[-1] not in ["base", "add", "mul", "total"]:
-            parsed_args.append("total")
-        field, mode = "_".join(parsed_args[:-1]), parsed_args[-1]
+        try:
+            parsed_args = item.split("_")
+            field, mode = Province.Field("_".join(parsed_args[:-1])), Province.Query(parsed_args[-1])
+        except:
+            field, mode = Province.Field(item), Province.Query.total
 
-        if mode == "base":
-            return self.__getattr__("_" + field)
-        if mode == "add":
+        if mode == Province.Query.base:
+            return self.get(field)
+        if mode == Province.Query.add:
             return self.buildings.impact(field, 0)
-        if mode == "mul":
+        if mode == Province.Query.mul:
             mod = 0
-            if field == "pm":
+            if field == Province.Field.pm:
                 this_tv = self.region.tv()
                 avg_tv = self.region.avg_neighbors_tv()
                 mod = PM_FROM_TRADE_MOD * (1 - min(this_tv, avg_tv) / max(this_tv, avg_tv))
@@ -114,8 +130,15 @@ class Province:
                 part = self.state.tv(self.trade_id) / this_tv
                 mod *= part ** 0.5
             return mod + self.buildings.impact(field, 1)
-        if mode == "total":
-            return int((self.__getattr__(field + "_base")
-                     + self.__getattr__(field + "_add"))
-                    * (ACC + self.__getattr__(field + "_mul")) // ACC)
+        if mode == Province.Query.total:
+            return int((self.get(field, Province.Query.base)
+                        + self.get(field, Province.Query.add))
+                       * (ACC + self.get(field, Province.Query.mul)) // ACC)
         raise AttributeError("Province attribute error: no attribute " + item)
+
+    def get(self, field, query=ProvinceQueryEnum.base):
+        if type(field) == str:
+            return self.__getattr__(field)
+        if query == ProvinceQueryEnum.base:
+            return self.__getattr__("_" + field.name)
+        return self.__getattr__(field.name + "_" + query.name)
