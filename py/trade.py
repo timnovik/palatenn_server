@@ -38,3 +38,6 @@ class TradeRegion:
         for neighbor in self.neighbors:
             total += neighbor.tv()
         return total // n
+
+    def get(self, item):
+        return self.__getattribute__(item)

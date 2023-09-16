@@ -26,7 +26,10 @@ def state_view(state_id):
 
 @app.route('/state/<int:state_id>/<string:attr>')
 def state_attr_view(state_id, attr):
-    return str(states[state_id].get(attr))
+    res = states[state_id].get(attr)
+    if callable(res):
+        return str(res())
+    return str(res)
 
 
 @app.route('/region/<int:region_id>')
@@ -36,7 +39,7 @@ def region_view(region_id):
 
 @app.route('/region/<int:region_id>/<string:attr>')
 def region_attr_view(region_id, attr):
-    return str(regions[region_id].__getattribute__(attr))
+    return str(regions[region_id].get(attr))
 
 
 if __name__ == '__main__':

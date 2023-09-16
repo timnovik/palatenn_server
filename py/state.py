@@ -24,7 +24,10 @@ class State:
         return calc
 
     def get(self, item):
-        return self.__getattribute__(item)
+        try:
+            return self.__getattribute__(item)
+        except AttributeError:
+            return self.__getattr__(item)
 
     def __str__(self):
         return SEP.join(map(str, [self.id, self.name])) + ";"
