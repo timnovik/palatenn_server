@@ -25,6 +25,7 @@ def load_regions():
     for line in open(REGION_DB, "r"):
         region = TradeRegion(line)
         res[region.id] = region
+    connect_regions(res)
     return res
 
 
@@ -33,6 +34,12 @@ def write_regions(data):
         for region in data.values():
             print(region, file=db)
     rename(REGION_DB + ".new", REGION_DB)
+
+
+def connect_regions(data):
+    for region in data.values():
+        for i in region.neighbor_ids:
+            region.neighbors.append(data[i])
 
 
 def load_provinces(states_data=None, trade_data=None):

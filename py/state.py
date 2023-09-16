@@ -1,6 +1,5 @@
 from config import *
 from province import Province
-import json
 
 
 class State:

@@ -89,7 +89,7 @@ class Province:
             if item == "_pm":
                 return self.pop * self.urban * self.dev // URB_MUL
             if item == "_tv":
-                return self.pm * self.urban * self.goods_cost // (URB_MUL * GC_MUL)
+                return self.pm_base * self.urban * self.goods_cost // (URB_MUL * GC_MUL)
             return self.__getattribute__(item)
 
         parsed_args = item.split("_")
@@ -102,9 +102,20 @@ class Province:
         if mode == "add":
             return self.buildings.impact(field, 0)
         if mode == "mul":
-            return self.buildings.impact(field, 1)
+            mod = 0
+            if field == "pm":
+                this_tv = self.region.tv()
+                avg_tv = self.region.avg_neighbors_tv()
+                mod = PM_FROM_TRADE_MOD * (1 - min(this_tv, avg_tv) / max(this_tv, avg_tv))
+                if mod > MAX_FLOW:
+                    mod = MAX_FLOW
+                if this_tv < avg_tv:
+                    mod *= -1
+                part = self.state.tv(self.trade_id) / this_tv
+                mod *= part ** 0.5
+            return mod + self.buildings.impact(field, 1)
         if mode == "total":
-            return ((self.__getattr__(field + "_base")
+            return int((self.__getattr__(field + "_base")
                      + self.__getattr__(field + "_add"))
                     * (ACC + self.__getattr__(field + "_mul")) // ACC)
         raise AttributeError("Province attribute error: no attribute " + item)

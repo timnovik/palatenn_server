@@ -4,16 +4,19 @@ from province import Province
 
 
 class TradeRegion:
-    def __init__(self, id_, name=""):
+    def __init__(self, id_, name="", neighbor_ids=()):
         self.states = []
         self.provinces = []
+        self.neighbors = []
         if type(id_) == str:
             s = id_.split(SEP)
-            self.name = s[1]
             self.id = int(s[0])
+            self.name = s[1]
+            self.neighbor_ids = tuple(map(int, s[2].split(",")))
         else:
-            self.name = name
             self.id = id_
+            self.name = name
+            self.neighbor_ids = neighbor_ids
 
     def __str__(self):
         return SEP.join(map(str, [self.id, self.name])) + ";"
@@ -28,3 +31,10 @@ class TradeRegion:
         for province in self.provinces:
             res += province.tv
         return res
+
+    def avg_neighbors_tv(self):
+        n = len(self.neighbor_ids)
+        total = 0
+        for neighbor in self.neighbors:
+            total += neighbor.tv()
+        return total // n

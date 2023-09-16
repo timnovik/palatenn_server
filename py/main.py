@@ -9,4 +9,5 @@ states, regions, provinces = load()
 
 print([province.tv for province in provinces.values()])
 print([state.tv() for state in states.values()])
-print(regions[0].tv())
+print([region.avg_neighbors_tv() for region in regions.values()])
+print([province.pm for province in provinces.values()])
