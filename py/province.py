@@ -138,7 +138,10 @@ class Province:
 
     def get(self, field, query=ProvinceQueryEnum.base):
         if type(field) == str:
-            return self.__getattr__(field)
+            try:
+                return self.__getattribute__(field)
+            except AttributeError:
+                return self.__getattr__(field)
         if query == ProvinceQueryEnum.base:
             return self.__getattr__("_" + field.name)
         return self.__getattr__(field.name + "_" + query.name)
