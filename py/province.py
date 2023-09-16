@@ -15,7 +15,7 @@ class Buildings:
 
     def __iadd__(self, other):
         cnt = 1
-        if SEP in other:
+        if type(other) == str and SEP in other:
             other, cnt = other.split(SEP)
             cnt = int(cnt)
         other = BuildingEnum(other)
@@ -47,11 +47,11 @@ class Buildings:
         self.__dict__[key] = value
 
     def impact(self, val, mode):
-        if type(val) == Province.Field:
-            val = val.name
+        if type(val) != ProvinceFieldEnum:
+            val = Province.Field(val)
         res = 0
-        for building in BuildingEnum:
-            res += self.__getattr__(building) * BUILDINGS_IMPACT[building].get(val, (0, 0))[mode]
+        for building_type, building in BUILDINGS.items():
+            res += building.impact(self.__getattr__(building_type), val, mode)
         return res
 
 
