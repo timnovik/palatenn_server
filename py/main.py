@@ -5,9 +5,8 @@ from trade import TradeRegion
 from db import *
 
 
-states = load_states()
-regions = load_regions()
-provinces = load_provinces(states, regions)
+states, regions, provinces = load()
 
-print(sum([p.tv for p in provinces.values()]))
+print([province.tv for province in provinces.values()])
+print([state.tv() for state in states.values()])
 print(regions[0].tv())

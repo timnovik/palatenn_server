@@ -58,3 +58,16 @@ def write_provinces(data):
         for province in data.values():
             print(province, file=db)
     rename(PROVINCE_DB + ".new", PROVINCE_DB)
+
+
+def load():
+    states = load_states()
+    regions = load_regions()
+    provinces = load_provinces(states, regions)
+    return states, regions, provinces
+
+
+def write(states, regions, provinces):
+    write_states(states)
+    write_regions(regions)
+    write_provinces(provinces)

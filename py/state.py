@@ -11,8 +11,15 @@ class State:
             self.id = int(s[0])
             self.name = s[1]
         else:
-            self.id = id
+            self.id = id_
             self.name = name
+
+    def tv(self, region_id=-1):
+        res = 0
+        for province in self.provinces:
+            if region_id == -1 or province.trade_id == region_id:
+                res += province.tv
+        return res
 
     def __str__(self):
         return SEP.join(map(str, [self.id, self.name])) + ";"

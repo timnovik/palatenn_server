@@ -4,16 +4,16 @@ from province import Province
 
 
 class TradeRegion:
-    def __init__(self, name, id=0):
+    def __init__(self, id_, name=""):
         self.states = []
         self.provinces = []
-        if ";" not in name:
-            self.name = name
-            self.id = id
-        else:
-            s = name.split(SEP)
+        if type(id_) == str:
+            s = id_.split(SEP)
             self.name = s[1]
             self.id = int(s[0])
+        else:
+            self.name = name
+            self.id = id_
 
     def __str__(self):
         return SEP.join(map(str, [self.id, self.name])) + ";"
