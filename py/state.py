@@ -1,4 +1,5 @@
 from config import *
+from copy import copy
 from province import Province
 
 
@@ -19,7 +20,7 @@ class State:
             for province in self.provinces:
                 if region_id == -1 or province.trade_id == region_id:
                     if res is None:
-                        res = province.get(item)
+                        res = copy(province.get(item))
                     else:
                         res += province.get(item)
             return res
