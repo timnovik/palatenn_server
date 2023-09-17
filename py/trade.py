@@ -19,7 +19,7 @@ class TradeRegion:
             self.neighbor_ids = neighbor_ids
 
     def __str__(self):
-        return SEP.join(map(str, [self.id, self.name])) + ";"
+        return SEP.join(map(str, [self.id, self.name, ",".join(map(str, self.neighbor_ids))])) + SEP
 
     def __repr__(self):
         return str(self)

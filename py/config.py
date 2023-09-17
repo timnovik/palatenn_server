@@ -9,9 +9,10 @@ SEP = ";"
 URB_POS = 4
 GC_POS = 5
 
-PROVINCE_DB = "data/provinces.csv"
-STATE_DB = "data/states.csv"
-REGION_DB = "data/regions.csv"
+DB_PATH = "data"
+PROVINCE_PATH = "provinces.csv"
+STATE_PATH = "states.csv"
+REGION_PATH = "regions.csv"
 
 # ACCURACY CONFIG
 ACC = 100      # точность вычисления процентных модификаторов
@@ -59,9 +60,15 @@ class BuildingEnum(Enum):
         return self.name + SEP + str(other)
 
 
+class BuildingCost:
+    def __init__(self, pm, money, ap):
+        pass
+
+
 class BuildingType:
-    def __init__(self, building, impact):
+    def __init__(self, building, impact, cost=BuildingCost(0, 0, 0)):
         self.building = building
+        self.cost = cost
         self._impact = {field: impact.get(field, (0, 0)) for field in ProvinceFieldEnum}
 
     def impact(self, cnt, field, mode):

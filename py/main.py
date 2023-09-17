@@ -1,12 +1,13 @@
 from config import *
-from province import Province
+from province import Province, Buildings
 from state import State
 from trade import TradeRegion
 from db import *
 
 
-states, regions, provinces = load()
+data = DB(DB_PATH)
+states, regions, provinces = data.load()
 prov = provinces[0]
-print(prov, prov.pm_base)
 prov.buildings += BuildingEnum.city * 2
-print(prov, prov.pm_base)
+prov.buildings += Buildings("2;1;0;0;0;0;0;0;0;0;0;0;0;0;0;")
+data.write(states, regions, provinces)

@@ -9,17 +9,23 @@ class Buildings:
             self.__init__(str(data))
             return
         if type(data) == str:
+            if data[-1] == SEP:
+                data = data[:-1]
             data = list(map(int, data.split(SEP)))
         for i in range(len(BuildingEnum)):
             self.__setattr__(list(BuildingEnum)[i], data[i])
 
     def __iadd__(self, other):
+        if type(other) == Buildings:
+            for building in BuildingEnum:
+                self.__setattr__(building, self[building] + other[building])
+            return self
         cnt = 1
         if type(other) == str and SEP in other:
             other, cnt = other.split(SEP)
             cnt = int(cnt)
         other = BuildingEnum(other)
-        self.__setattr__(other, self.__getattr__(other) + cnt)
+        self.__setattr__(other, self[other] + cnt)
         return self
 
     def __add__(self, other):
@@ -27,8 +33,11 @@ class Buildings:
         res += other
         return res
 
+    def __getitem__(self, item):
+        return self.__getattr__(item)
+
     def __str__(self):
-        return SEP.join(map(lambda building: str(self.__getattr__(building)), BuildingEnum)) + ";"
+        return SEP.join(map(lambda building: str(self[building]), BuildingEnum))
 
     def __repr__(self):
         return str(self)
@@ -68,9 +77,9 @@ class Province:
             self.id, self.state_id, self.trade_id, self._pop, self._urban, self._goods_cost, self._dev = val[1:-len(BuildingEnum)]
             self.buildings = Buildings(val[-len(BuildingEnum):])
 
-        elif type(val) == str and ";" in val:
+        elif type(val) == str and SEP in val:
             val = val.strip()
-            if val[-1] == ";":
+            if val[-1] == SEP:
                 val = val[:-1]
             str_list = val.replace(",", ".").split(SEP)
             self.name = str_list[0]
@@ -94,7 +103,7 @@ class Province:
                 self._goods_cost = int(self._goods_cost)
 
     def __str__(self):
-        return SEP.join(map(str, [self.name, self.id, self.state_id, self.trade_id, self._pop, self._urban, self._goods_cost, self._dev])) + ";" + str(self.buildings)
+        return SEP.join(map(str, [self.name, self.id, self.state_id, self.trade_id, self._pop, self._urban, self._goods_cost, self._dev, self.buildings])) + SEP
 
     def __repr__(self):
         return str(self)

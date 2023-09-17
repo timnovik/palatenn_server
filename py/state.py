@@ -15,10 +15,13 @@ class State:
 
     def __getattr__(self, item):
         def calc(region_id=-1):
-            res = 0
+            res = None
             for province in self.provinces:
                 if region_id == -1 or province.trade_id == region_id:
-                    res += province.get(item)
+                    if res is None:
+                        res = province.get(item)
+                    else:
+                        res += province.get(item)
             return res
 
         return calc
@@ -30,7 +33,7 @@ class State:
             return self.__getattr__(item)
 
     def __str__(self):
-        return SEP.join(map(str, [self.id, self.name])) + ";"
+        return SEP.join(map(str, [self.id, self.name])) + SEP
 
     def __repr__(self):
         return str(self)
