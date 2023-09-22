@@ -1,18 +1,25 @@
-from config import *
+from helpers import *
+from controller import *
+from db import *
+from helpers import *
+from province import *
+from trade import *
+
 from copy import copy
-from province import Province
 
 
 class State:
-    def __init__(self, id_, name=""):
+    def __init__(self, id, name="", money=0):
         self.provinces = []
-        if type(id_) == str:
-            s = id_.split(SEP)
+        if type(id) == str:
+            s = id.split(SEP)
             self.id = int(s[0])
             self.name = s[1]
+            self.money = int(s[2])
         else:
-            self.id = id_
+            self.id = id
             self.name = name
+            self.money = money
 
     def __getattr__(self, item):
         def calc(region_id=-1):
@@ -34,7 +41,7 @@ class State:
             return self.__getattr__(item)
 
     def __str__(self):
-        return SEP.join(map(str, [self.id, self.name])) + SEP
+        return SEP.join(map(str, [self.id, self.name, self.money])) + SEP
 
     def __repr__(self):
         return str(self)

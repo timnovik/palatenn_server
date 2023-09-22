@@ -1,7 +1,11 @@
-from config import *
-from province import Province
-from state import State
-from trade import TradeRegion
+from helpers import *
+from controller import *
+from db import *
+from helpers import *
+from province import *
+from state import *
+from trade import *
+
 from os import rename
 
 
@@ -68,7 +72,7 @@ class DB:
                 print(province, file=db)
 
     def commit_provinces(self):
-        rename(self.db_path + "/new/" + PROVINCE_PATH, PROVINCE_PATH)
+        rename(self.db_path + "/new/" + PROVINCE_PATH,  self.db_path + "/" + PROVINCE_PATH)
 
     def load(self):
         states = self.load_states()
@@ -80,6 +84,7 @@ class DB:
         self.write_states(states)
         self.write_regions(regions)
         self.write_provinces(provinces)
+        self.commit()
 
     def commit(self):
         self.commit_states()

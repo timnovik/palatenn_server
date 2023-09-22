@@ -1,4 +1,10 @@
-from config import *
+from helpers import *
+from controller import *
+from db import *
+from helpers import *
+from province import *
+from state import *
+from trade import *
 
 
 class Buildings:
@@ -25,6 +31,8 @@ class Buildings:
             other, cnt = other.split(SEP)
             cnt = int(cnt)
         other = BuildingEnum(other)
+        if other == BuildingEnum.city:
+            self += BuildingEnum.block * cnt
         self.__setattr__(other, self[other] + cnt)
         return self
 
@@ -110,11 +118,14 @@ class Province:
 
     def __getattr__(self, item):
         if item[0] == "_":
-            if item == "_" + Province.Field.pm.name:
+            item = item[1:]
+            if item == Province.Field.pm.name:
                 return self.pop * self.urban * self.dev // URB_MUL
-            if item == "_" + Province.Field.tv.name:
+            if item == Province.Field.tv.name:
                 return self.pm_base * self.urban * self.goods_cost // (URB_MUL * GC_MUL)
-            return self.__getattribute__(item)
+            if item == ProvinceFieldEnum.ap.name:
+                return 0
+            return self.__getattribute__("_" + item)
 
         try:
             parsed_args = item.split("_")

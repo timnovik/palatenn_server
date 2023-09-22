@@ -1,15 +1,13 @@
-from config import *
-from province import Province, Buildings
-from state import State
-from trade import TradeRegion
+from helpers import *
+from controller import *
 from db import *
+from helpers import *
+from province import *
+from state import *
+from trade import *
 
 
-data = DB(DB_PATH)
-states, regions, provinces = data.load()
-prov = provinces[0]
-prov.buildings += BuildingEnum.city * 2
-prov.buildings += Buildings("2;1;0;0;0;0;0;0;0;0;0;0;0;0;0;")
-provinces[1].buildings += BuildingEnum.city
-provinces[1].buildings += BuildingEnum.barracks
-data.write(states, regions, provinces)
+controller = Controller()
+controller.add_action(Action(ActionEnum.build, BuildActionData(BuildingEnum.block, 1, 0)))
+status, index = controller.commit()
+print(status)
