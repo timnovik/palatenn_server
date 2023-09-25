@@ -57,7 +57,7 @@ def admin():
                             msg += str(action) + "<br>"
 
                 elif s_query[0] == "spent":
-                    for state_id, cost in controller.spent:
+                    for state_id, cost in controller.spent.items():
                             msg += f"{state_id}: {cost}<br>"
 
             elif query_type == "build":
