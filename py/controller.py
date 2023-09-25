@@ -16,6 +16,7 @@ class Controller:
     def __init__(self, db_path=DB_PATH):
         self.actions = []
         self.data = DB(db_path)
+        self._costs = dict()
         self.load()
         self.spent = {state_id: Cost() for state_id in self.states.keys()}
 
@@ -33,7 +34,6 @@ class Controller:
             self.spent[self.provinces[action.data.province_id].state_id] += action.data.calc_cost()
 
     def calc_costs(self):
-        self._costs = dict()
         for state in self.states.values():
             self._costs[state.id] = round(self.spent[state.id].money * max(MIN_DISC, self.spent[state.id].pm / state.pm()) ** 2)
 
@@ -44,6 +44,10 @@ class Controller:
             if state.money < self._costs[state.id]:
                 return ControllerStatusEnum.money_overdraft, state.id
         return ControllerStatusEnum.ok, -1
+
+    def clear(self):
+        self._costs.clear()
+        self.actions.clear()
 
     def commit(self):
         try:
@@ -58,6 +62,7 @@ class Controller:
                     self.provinces[action.data.province_id].buildings += action.data.build_type * action.data.count
             self.write()
             self.load()
+            self.clear()
             return ControllerStatusEnum.ok, -1
         except:
             return ControllerStatusEnum.unknown, -1    

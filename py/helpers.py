@@ -1,6 +1,7 @@
 from enum import Enum
 
 # NETWORK CONFIG
+ADMIN_KEY = "stronghold_is_the_best"
 HOST_IP = "127.0.0.1"
 HOST_PORT = 5000
 

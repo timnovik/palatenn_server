@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>admin</title>
+</head>
+<body>
+    {% if msg %}
+        {{ msg }}
+    {% endif %}
+    <form action="" method="post">
+        <p>
+            <label for="type">type</label>
+            <select list="type" name="type">
+                <option value="build">build</option>
+                <option value="commit">commit</option>
+  </datalist>
+        </p>
+        <p>
+            <label for="query">query</label>
+            <input name="query">
+        </p>
+        <p>
+            <label for="key">key</label>
+            <input type="password" name="key">
+        </p>
+	<p>
+	    <input type="submit">
+	</p>
+    </form>
+    
+</body>
+</html>
