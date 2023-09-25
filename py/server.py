@@ -54,6 +54,8 @@ def admin():
             elif query_type == "commit":
                 status, state = controller.commit()
                 msg = str((status.name, state))
+        else:
+            raise KeyError
     return render_template('admin.html', msg=msg)
 
 
