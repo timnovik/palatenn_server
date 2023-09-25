@@ -3,45 +3,6 @@ from main import *
 
 app = Flask(__name__, template_folder="../templates")
 
-
-@app.route('/')
-def hello():
-    return 'Hello, world!'
-
-
-@app.route('/province/<int:province_id>')
-def province_view(province_id):
-    return str(controller.provinces[province_id])
-
-
-@app.route('/province/<int:province_id>/<string:attr>')
-def province_attr_view(province_id, attr):
-    return str(controller.provinces[province_id].get(attr))
-
-
-@app.route('/state/<int:state_id>')
-def state_view(state_id):
-    return str(controller.states[state_id])
-
-
-@app.route('/state/<int:state_id>/<string:attr>')
-def state_attr_view(state_id, attr):
-    res = controller.states[state_id].get(attr)
-    if callable(res):
-        return str(res())
-    return str(res)
-
-
-@app.route('/region/<int:region_id>')
-def region_view(region_id):
-    return str(controller.regions[region_id])
-
-
-@app.route('/region/<int:region_id>/<string:attr>')
-def region_attr_view(region_id, attr):
-    return str(controller.regions[region_id].get(attr))
-
-
 @app.route('/admin', methods=['post', 'get'])
 def admin():
     msg = ''
@@ -50,7 +11,45 @@ def admin():
         query = request.form.get('query')
         key = request.form.get('key')
         if key == ADMIN_KEY:
-            if query_type == "build":
+            if query_type == "view":
+                s_query = query.split()
+                if s_query[0] == "region":
+                    if len(s_query) > 1:
+                        id_ = int(s_query[1])
+                        if len(s_query) > 2:
+                            field = s_query[2]
+                            msg = controller.regions[id_].get(field)
+                        else:
+                            msg = controller.regions[id_]
+                    else:
+                        for region in controller.regions:
+                            msg += str(region) + "\n"
+
+                if s_query[0] == "state":
+                    if len(s_query) > 1:
+                        id_ = int(s_query[1])
+                        if len(s_query) > 2:
+                            field = s_query[2]
+                            msg = controller.states[id_].get(field)
+                        else:
+                            msg = controller.states[id_]
+                    else:
+                        for state in controller.states:
+                            msg += str(state) + "\n"
+
+                if s_query[0] == "province":
+                    if len(s_query) > 1:
+                        id_ = int(s_query[1])
+                        if len(s_query) > 2:
+                            field = s_query[2]
+                            msg = controller.provinces[id_].get(field)
+                        else:
+                            msg = controller.provinces[id_]
+                    else:
+                        for province in controller.provinces:
+                            msg += str(province) + "\n"
+
+            elif query_type == "build":
                 controller.add_action(eval(f"Action(ActionEnum.build, BuildActionData(BuildingEnum.{query}))"))
             elif query_type == "commit":
                 status, state = controller.commit()
