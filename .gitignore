@@ -1,4 +1,5 @@
 .idea/
 py/__pycache__/
+py/host.py
 cmake-build-debug/
 data/new
