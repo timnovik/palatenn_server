@@ -22,8 +22,8 @@ def admin():
                         else:
                             msg = controller.regions[id_]
                     else:
-                        for region in controller.regions:
-                            msg += str(region) + "\n"
+                        for region in controller.regions.values():
+                            msg += str(region) + "<br>"
 
                 if s_query[0] == "state":
                     if len(s_query) > 1:
@@ -34,8 +34,8 @@ def admin():
                         else:
                             msg = controller.states[id_]
                     else:
-                        for state in controller.states:
-                            msg += str(state) + "\n"
+                        for state in controller.states.values():
+                            msg += str(state) + "<br>"
 
                 if s_query[0] == "province":
                     if len(s_query) > 1:
@@ -46,8 +46,8 @@ def admin():
                         else:
                             msg = controller.provinces[id_]
                     else:
-                        for province in controller.provinces:
-                            msg += str(province) + "\n"
+                        for province in controller.provinces.values():
+                            msg += str(province) + "<br>"
 
             elif query_type == "build":
                 controller.add_action(eval(f"Action(ActionEnum.build, BuildActionData(BuildingEnum.{query}))"))
