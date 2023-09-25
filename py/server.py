@@ -55,7 +55,7 @@ def admin():
                 status, state = controller.commit()
                 msg = str((status.name, state))
         else:
-            raise KeyError
+            raise KeyError(f"hash({key})={hash(key)}!={ADMIN_KEY_HASH}")
     return render_template('admin.html', msg=msg)
 
 
