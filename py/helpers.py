@@ -130,21 +130,126 @@ class BuildingType:
 
 
 BUILDINGS = {
-    BuildingEnum.city: BuildingType(BuildingEnum.city, {ProvinceFieldEnum.urban: (5, 0), ProvinceFieldEnum.dev: (5, 0)}, Cost(0, 0, 0)),
-    BuildingEnum.block: BuildingType(BuildingEnum.block, {ProvinceFieldEnum.dev: (1, 0), ProvinceFieldEnum.ap: (1, 0)}, Cost(0, 0, 0)),
-    BuildingEnum.road: BuildingType(BuildingEnum.road, {ProvinceFieldEnum.dev: (0, 10)}, Cost(0, 0, 0)),
-    BuildingEnum.bridge: BuildingType(BuildingEnum.bridge, {ProvinceFieldEnum.dev: (0, 10)}, Cost(0, 0, 0)),
-    BuildingEnum.mine: BuildingType(BuildingEnum.mine, {ProvinceFieldEnum.dev: (3, 0)}, Cost(0, 0, 0)),
-    BuildingEnum.market: BuildingType(BuildingEnum.market, {ProvinceFieldEnum.goods_cost: (100, 0)}, Cost(0, 0, 0)),
-    BuildingEnum.trading_post: BuildingType(BuildingEnum.trading_post, {ProvinceFieldEnum.tv: (0, 10)}, Cost(0, 0, 0)),
-    BuildingEnum.port: BuildingType(BuildingEnum.port, {ProvinceFieldEnum.dev: (1, 0)}, Cost(0, 0, 0)),
-    BuildingEnum.shipyard: BuildingType(BuildingEnum.shipyard, {ProvinceFieldEnum.dev: (1, 0)}, Cost(0, 0, 0)),
-    BuildingEnum.workshop: BuildingType(BuildingEnum.workshop, {ProvinceFieldEnum.dev: (1, 0)}, Cost(0, 0, 0)),
-    BuildingEnum.barracks: BuildingType(BuildingEnum.barracks, {}, Cost(0, 0, 0)),
-    BuildingEnum.forge: BuildingType(BuildingEnum.forge, {ProvinceFieldEnum.dev: (1, 0)}, Cost(0, 0, 0)),
-    BuildingEnum.furnace: BuildingType(BuildingEnum.furnace, {ProvinceFieldEnum.dev: (2, 0)}, Cost(0, 0, 0)),
-    BuildingEnum.stable: BuildingType(BuildingEnum.stable, {}, Cost(0, 0, 0)),
-    BuildingEnum.stock: BuildingType(BuildingEnum.stock, {ProvinceFieldEnum.pm_cap: (1000, 0)}, Cost(0, 0, 0)),
+    BuildingEnum.city: 
+        BuildingType(
+            BuildingEnum.city, 
+            {
+                ProvinceFieldEnum.urban: (5, 0), 
+                ProvinceFieldEnum.dev: (5, 0)
+            }, 
+            Cost(0, 0, 0)
+        ),
+    BuildingEnum.block: 
+        BuildingType(
+            BuildingEnum.block, 
+            {
+                ProvinceFieldEnum.dev: (1, 0), 
+                ProvinceFieldEnum.ap: (1, 0)
+            }, 
+            Cost(0, 0, 0)
+        ),
+    BuildingEnum.road: 
+        BuildingType(
+            BuildingEnum.road, 
+            {
+                ProvinceFieldEnum.dev: (0, 10)
+            }, 
+            Cost(0, 0, 0)
+        ),
+    BuildingEnum.bridge: 
+        BuildingType(
+            BuildingEnum.bridge, 
+            {
+                ProvinceFieldEnum.dev: (0, 10)
+            }, 
+            Cost(0, 0, 0)
+        ),
+    BuildingEnum.mine: 
+        BuildingType(
+            BuildingEnum.mine, 
+            {
+                ProvinceFieldEnum.dev: (3, 0)
+            }, 
+            Cost(0, 0, 0)
+        ),
+    BuildingEnum.market: 
+        BuildingType(
+            BuildingEnum.market, 
+            {
+                ProvinceFieldEnum.goods_cost: (100, 0)
+            }, 
+            Cost(0, 0, 0)
+        ),
+    BuildingEnum.trading_post: 
+        BuildingType(
+            BuildingEnum.trading_post, 
+            {
+                ProvinceFieldEnum.tv: (0, 10)
+            }, 
+            Cost(0, 0, 0)
+        ),
+    BuildingEnum.port: 
+        BuildingType(
+            BuildingEnum.port, 
+            {
+                ProvinceFieldEnum.dev: (1, 0)
+            }, 
+            Cost(0, 0, 0)
+        ),
+    BuildingEnum.shipyard: 
+        BuildingType(
+            BuildingEnum.shipyard, 
+            {
+                ProvinceFieldEnum.dev: (1, 0)
+            }, 
+            Cost(0, 0, 0)
+        ),
+    BuildingEnum.workshop: 
+        BuildingType(
+            BuildingEnum.workshop, 
+            {
+                ProvinceFieldEnum.dev: (1, 0)
+            }, 
+            Cost(0, 0, 0)
+        ),
+    BuildingEnum.barracks: 
+        BuildingType(
+            BuildingEnum.barracks, 
+            {
+            }, 
+            Cost(0, 0, 0)
+        ),
+    BuildingEnum.forge: 
+        BuildingType(
+            BuildingEnum.forge, 
+            {
+                ProvinceFieldEnum.dev: (1, 0)
+            }, 
+            Cost(0, 0, 0)
+        ),
+    BuildingEnum.furnace: 
+        BuildingType(
+            BuildingEnum.furnace, 
+            {
+                ProvinceFieldEnum.dev: (2, 0)
+            }, 
+            Cost(0, 0, 0)
+        ),
+    BuildingEnum.stable: 
+        BuildingType(
+            BuildingEnum.stable, 
+            {
+            }, 
+            Cost(0, 0, 0)
+        ),
+    BuildingEnum.stock: 
+        BuildingType(
+            BuildingEnum.stock, 
+            {
+                ProvinceFieldEnum.pm_cap: (1000, 0)
+            }, 
+            Cost(0, 0, 0)
+        ),
 }
 
 # TRADE CONFIG
