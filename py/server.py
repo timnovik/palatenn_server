@@ -10,7 +10,7 @@ def admin():
         query_type = request.form.get('type')
         query = request.form.get('query')
         key = request.form.get('key')
-        if key == ADMIN_KEY:
+        if hash(key) == ADMIN_KEY_HASH:
             if query_type == "view":
                 s_query = query.split()
                 if s_query[0] == "region":
