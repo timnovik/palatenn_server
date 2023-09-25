@@ -20,9 +20,9 @@ def admin():
                         id_ = int(s_query[1])
                         if len(s_query) > 2:
                             field = s_query[2]
-                            msg = controller.regions[id_].get(field)
+                            msg = str(controller.regions[id_].get(field))
                         else:
-                            msg = controller.regions[id_]
+                            msg = str(controller.regions[id_])
                     else:
                         for region in controller.regions.values():
                             msg += str(region) + "<br>"
@@ -32,9 +32,9 @@ def admin():
                         id_ = int(s_query[1])
                         if len(s_query) > 2:
                             field = s_query[2]
-                            msg = controller.states[id_].get(field)
+                            msg = str(controller.states[id_].get(field))
                         else:
-                            msg = controller.states[id_]
+                            msg = str(controller.states[id_])
                     else:
                         for state in controller.states.values():
                             msg += str(state) + "<br>"
@@ -44,9 +44,9 @@ def admin():
                         id_ = int(s_query[1])
                         if len(s_query) > 2:
                             field = s_query[2]
-                            msg = controller.provinces[id_].get(field)
+                            msg = str(controller.provinces[id_].get(field))
                         else:
-                            msg = controller.provinces[id_]
+                            msg = str(controller.provinces[id_])
                     else:
                         for province in controller.provinces.values():
                             msg += str(province) + "<br>"
