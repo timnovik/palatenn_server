@@ -12,7 +12,7 @@ class Action:
         self.data = action_data
 
     def __repr__(self):
-        return f"{self.type}( {self.data} )"
+        return f"{self.type} #{self.data}"
 
     def __str__(self):
         return self.__repr__()
