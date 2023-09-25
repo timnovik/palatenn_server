@@ -15,6 +15,7 @@ def admin():
         if sha256(key.encode()).hexdigest() == ADMIN_KEY_HASH:
             if query_type == "view":
                 s_query = query.split()
+
                 if s_query[0] == "region":
                     if len(s_query) > 1:
                         id_ = int(s_query[1])
@@ -27,7 +28,7 @@ def admin():
                         for region in controller.regions.values():
                             msg += str(region) + "<br>"
 
-                if s_query[0] == "state":
+                elif s_query[0] == "state":
                     if len(s_query) > 1:
                         id_ = int(s_query[1])
                         if len(s_query) > 2:
@@ -39,7 +40,7 @@ def admin():
                         for state in controller.states.values():
                             msg += str(state) + "<br>"
 
-                if s_query[0] == "province":
+                elif s_query[0] == "province":
                     if len(s_query) > 1:
                         id_ = int(s_query[1])
                         if len(s_query) > 2:
@@ -50,6 +51,14 @@ def admin():
                     else:
                         for province in controller.provinces.values():
                             msg += str(province) + "<br>"
+
+                elif s_query[0] == "actions":
+                    for action in controller.actions:
+                            msg += str(action) + "<br>"
+
+                elif s_query[0] == "spent":
+                    for state_id, cost in controller.spent:
+                            msg += f"{state_id}: {cost}<br>"
 
             elif query_type == "build":
                 controller.add_action(eval(f"Action(ActionEnum.build, BuildActionData(BuildingEnum.{query}))"))

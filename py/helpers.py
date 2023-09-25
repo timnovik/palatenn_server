@@ -88,6 +88,12 @@ class BuildActionData(ActionData):
 
     def calc_cost(self):
         return BUILDINGS[self.build_type].cost * self.count
+    
+    def __repr__(self):
+        return f"{self.id}: {self.count}*{self.build_type} in prov #{self.province_id}"
+
+    def __str__(self):
+        return self.__repr__()
 
 
 class Cost:
@@ -117,6 +123,12 @@ class Cost:
         res = Cost(self.money, self.pm, self.ap)
         res *= other
         return res
+
+    def __repr__(self):
+        return f"money - {self.money}, pm - {self.pm}, ap - {self.ap}"
+
+    def __str__(self):
+        return self.__repr__()
 
 
 class BuildingType:

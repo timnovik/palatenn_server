@@ -11,6 +11,12 @@ class Action:
         self.type = action_type
         self.data = action_data
 
+    def __repr__(self):
+        return f"{self.type}( {self.data} )"
+
+    def __str__(self):
+        return self.__repr__()
+
 
 class Controller:
     def __init__(self, db_path=DB_PATH):
