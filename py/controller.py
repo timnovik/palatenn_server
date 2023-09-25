@@ -32,35 +32,30 @@ class Controller:
         if action.type == ActionEnum.build:
             self.spent[self.provinces[action.data.province_id].state_id] += action.data.calc_cost()
 
-    def costs(self):
-        try:
-            raise AttributeError
-            return self._costs
-        except AttributeError:
-            self._costs = dict()
-            for state in self.states.values():
-                self._costs[state.id] = round(self.spent[state.id].money * max(MIN_DISC, self.spent[state.id].pm / state.pm()) ** 2)
-            return self._costs
+    def calc_costs(self):
+        self._costs = dict()
+        for state in self.states.values():
+            self._costs[state.id] = round(self.spent[state.id].money * max(MIN_DISC, self.spent[state.id].pm / state.pm()) ** 2)
 
     def check(self):
         for state in self.states.values():
             if state.ap() < self.spent[state.id].ap:
                 return ControllerStatusEnum.bad_ap, state.id
-            if state.money < self.costs()[state.id]:
+            if state.money < self._costs[state.id]:
                 return ControllerStatusEnum.money_overdraft, state.id
         return ControllerStatusEnum.ok, -1
 
     def commit(self):
         try:
+            self.calc_costs()
             status, index = self.check()
             if status != ControllerStatusEnum.ok:
                 return status, index
             for state in self.states.values():
-                state.money -= self.costs()[state.id]
+                state.money -= self._costs[state.id]
             for action in self.actions:
                 if action.type == ActionEnum.build:
                     self.provinces[action.data.province_id].buildings += action.data.build_type * action.data.count
-            del self._costs
             self.write()
             self.load()
             return ControllerStatusEnum.ok, -1

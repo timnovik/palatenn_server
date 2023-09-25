@@ -10,4 +10,4 @@ from trade import *
 controller = Controller()
 controller.add_action(Action(ActionEnum.build, BuildActionData(BuildingEnum.block, 1, 0)))
 status, index = controller.commit()
-print(status)
+print(status, index)
