@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request
+from hashlib import sha256
 from main import *
+
 
 app = Flask(__name__, template_folder="../templates")
 
@@ -10,7 +12,7 @@ def admin():
         query_type = request.form.get('type')
         query = request.form.get('query')
         key = request.form.get('key')
-        if hash(key) == ADMIN_KEY_HASH:
+        if sha256(key.encode()).hexdigest() == ADMIN_KEY_HASH:
             if query_type == "view":
                 s_query = query.split()
                 if s_query[0] == "region":
@@ -55,7 +57,7 @@ def admin():
                 status, state = controller.commit()
                 msg = str((status.name, state))
         else:
-            raise KeyError(f"hash({key})={hash(key)}!={ADMIN_KEY_HASH}")
+            raise KeyError(f"sha256(\"{key}\")={hash(key)}!={ADMIN_KEY_HASH}")
     return render_template('admin.html', msg=msg)
 
 

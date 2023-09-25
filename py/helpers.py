@@ -1,6 +1,9 @@
 from enum import Enum
 from host import *
 
+# AUTH CONFIG
+ADMIN_KEY_HASH = "21095e62f04a16b069b02ae0b8d6ec404b502a232f1d73b275642569de3fbe85"
+
 # DATABASE CONFIG
 SEP = ";"
 URB_POS = 4
