@@ -1,4 +1,3 @@
-from helpers import *
 from controller import *
 from db import *
 from helpers import *
@@ -10,49 +9,49 @@ from os import rename
 
 
 class DB:
-    def __init__(self, db_path):
+    def __init__(self, db_path: str) -> Self:
         self.db_path = db_path
 
-    def load_states(self):
+    def load_states(self) -> dict[int, State]:
         res = dict()
         for line in open(self.db_path + "/" + STATE_PATH, "r"):
-            state = State(line)
+            state = State.load(line)
             res[state.id] = state
         return res
 
-    def write_states(self, data):
+    def write_states(self, data: dict[int, State]):
         with open(self.db_path + "/new/" + STATE_PATH, "w") as db:
             for state in data.values():
-                print(state, file=db)
+                print(state.save(), file=db)
 
-    def commit_states(self):
+    def commit_states(self) -> None:
         rename(self.db_path + "/new/" + STATE_PATH, self.db_path + "/" + STATE_PATH)
 
-    def load_regions(self):
+    def load_regions(self) -> None:
         res = dict()
         for line in open(self.db_path + "/" + REGION_PATH, "r"):
-            region = TradeRegion(line)
+            region = TradeRegion.load(line)
             res[region.id] = region
         self.connect_regions(res)
         return res
 
-    def write_regions(self, data):
+    def write_regions(self, data: dict[int, TradeRegion]) -> None:
         with open(self.db_path + "/new/" + REGION_PATH, "w") as db:
             for region in data.values():
-                print(region, file=db)
+                print(region.save(), file=db)
 
-    def commit_regions(self):
+    def commit_regions(self) -> None:
         rename(self.db_path + "/new/" + REGION_PATH, self.db_path + "/" + REGION_PATH)
 
-    def connect_regions(self, data):
+    def connect_regions(self, data: dict[int, TradeRegion]) -> None:
         for region in data.values():
             for i in region.neighbor_ids:
                 region.neighbors.append(data[i])
 
-    def load_provinces(self, states_data=None, trade_data=None):
+    def load_provinces(self, states_data: dict[int, State] | None = None, trade_data: dict[int, TradeRegion] | None = None) -> dict[int, Province]:
         res = dict()
         for line in open(self.db_path + "/" + PROVINCE_PATH, "r"):
-            province = Province(line)
+            province = Province.load(line)
             res[province.id] = province
             if states_data is not None:
                 state = states_data[province.state_id]
@@ -66,27 +65,27 @@ class DB:
                     region.states.append(province.state)
         return res
 
-    def write_provinces(self, data):
+    def write_provinces(self, data: dict[int, Province]) -> None:
         with open(self.db_path + "/new/" + PROVINCE_PATH, "w") as db:
             for province in data.values():
-                print(province, file=db)
+                print(province.save(), file=db)
 
-    def commit_provinces(self):
+    def commit_provinces(self) -> None:
         rename(self.db_path + "/new/" + PROVINCE_PATH,  self.db_path + "/" + PROVINCE_PATH)
 
-    def load(self):
+    def load(self) -> None:
         states = self.load_states()
         regions = self.load_regions()
         provinces = self.load_provinces(states, regions)
         return states, regions, provinces
 
-    def write(self, states, regions, provinces):
+    def write(self, states: dict[int, State], regions: dict[int, TradeRegion], provinces: dict[int, Province]) -> None:
         self.write_states(states)
         self.write_regions(regions)
         self.write_provinces(provinces)
         self.commit()
 
-    def commit(self):
+    def commit(self) -> None:
         self.commit_states()
         self.commit_regions()
         self.commit_provinces()

@@ -8,5 +8,3 @@ from trade import *
 
 
 controller = Controller()
-province = controller.provinces[0]
-print(province.get("pm_cap"))

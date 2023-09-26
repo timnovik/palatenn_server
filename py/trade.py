@@ -6,29 +6,32 @@ from province import *
 from state import *
 from trade import *
 
+from typing import Iterable, Self
+
 
 class TradeRegion:
-    def __init__(self, id_, name="", neighbor_ids=()):
+    def load(data: str) -> str:
+        s = data.split(SEP)
+        return TradeRegion(int(s[0]), s[1], tuple(map(int, s[2].split(","))))
+
+    def __init__(self, id: int, name: str = "", neighbor_ids: Iterable = ()) -> Self:
         self.states = []
         self.provinces = []
         self.neighbors = []
-        if type(id_) == str:
-            s = id_.split(SEP)
-            self.id = int(s[0])
-            self.name = s[1]
-            self.neighbor_ids = tuple(map(int, s[2].split(",")))
-        else:
-            self.id = id_
-            self.name = name
-            self.neighbor_ids = neighbor_ids
+        self.id = id
+        self.name = name
+        self.neighbor_ids = neighbor_ids
 
-    def __str__(self):
+    def save(self) -> str:
         return SEP.join(map(str, [self.id, self.name, ",".join(map(str, self.neighbor_ids))])) + SEP
 
-    def __repr__(self):
+    def __str__(self) -> str:
+        return self.save()
+
+    def __repr__(self) -> str:
         return str(self)
 
-    def tv(self):
+    def tv(self) -> int:
         if self.provinces is None:
             return 0
         res = 0
@@ -36,12 +39,12 @@ class TradeRegion:
             res += province.tv
         return res
 
-    def avg_neighbors_tv(self):
+    def avg_neighbors_tv(self) -> int:
         n = len(self.neighbor_ids)
         total = 0
         for neighbor in self.neighbors:
             total += neighbor.tv()
         return total // n
 
-    def get(self, item):
+    def get(self, item: str) -> Iterable | str | int:
         return self.__getattribute__(item)

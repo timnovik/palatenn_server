@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Self
 from host import *
 
 # AUTH CONFIG
@@ -70,74 +71,80 @@ class BuildingEnum(Enum):
     stable = "stable"
     stock = "stock"
 
-    def __mul__(self, other):
+    def __mul__(self, other: Self) -> str:
         return self.name + SEP + str(other)
 
 
 class ActionData:
-    def __init__(self, id):
+    def __init__(self, id: int) -> Self:
         self.id = id
 
 
-class BuildActionData(ActionData):
-    def __init__(self, build_type, count, province_id, id=-1):
-        ActionData.__init__(self, id)
-        self.build_type = build_type
-        self.count = count
-        self.province_id = province_id
-
-    def calc_cost(self):
-        return BUILDINGS[self.build_type].cost * self.count
-    
-    def __repr__(self):
-        return f"{self.id}: {self.count}*{self.build_type} in prov #{self.province_id}"
-
-    def __str__(self):
-        return self.__repr__()
-
-
 class Cost:
-    def __init__(self, money=0, pm=0, ap=0):
+    def __init__(self, money: int = 0, pm: int = 0, ap: int = 0) -> Self:
         self.money = money
         self.pm = pm
         self.ap = ap
 
-    def __iadd__(self, other):
+    def __iadd__(self, other: Self) -> Self:
         self.money += other.money
         self.pm += other.pm
         self.ap += other.ap
         return self
 
-    def __add__(self, other):
+    def __add__(self, other: Self) -> Self:
         res = Cost(self.money, self.pm, self.ap)
         res += other
         return res
     
-    def __imul__(self, other):
+    def __imul__(self, other: int) -> Self:
         self.money *= other
         self.pm *= other
         self.ap *= other
         return self
 
-    def __mul__(self, other):
+    def __mul__(self, other: int) -> Self:
         res = Cost(self.money, self.pm, self.ap)
         res *= other
         return res
 
-    def __repr__(self):
+    def save(self) -> str:
+        return SEP.join(map(str, [self.money, self.pm, self.ap])) + SEP
+
+    def __str__(self) -> str:
         return f"money - {self.money}, pm - {self.pm}, ap - {self.ap}"
 
-    def __str__(self):
-        return self.__repr__()
+    def __repr__(self) -> str:
+        return str(self)
+
+
+class BuildActionData(ActionData):
+    def __init__(self, build_type: BuildingEnum, count: int, province_id: int, id: int = -1) -> Self:
+        ActionData.__init__(self, id)
+        self.build_type = build_type
+        self.count = count
+        self.province_id = province_id
+
+    def calc_cost(self) -> Cost:
+        return BUILDINGS[self.build_type].cost * self.count
+
+    def save(self) -> str:
+        return SEP.join([self.build_type.name, str(self.count), str(self.province_id)])
+
+    def __str__(self) -> str:
+        return f"{self.id}: {self.count}*{self.build_type} in prov #{self.province_id}"
+
+    def __repr__(self) -> str:
+        return str(self)
 
 
 class BuildingType:
-    def __init__(self, building, impact, cost=Cost()):
+    def __init__(self, building: BuildingEnum, impact: dict[ProvinceFieldEnum, tuple[int, int]], cost: Cost = Cost()) -> Self:
         self.building = building
         self.cost = cost
         self._impact = {field: impact.get(field, (0, 0)) for field in ProvinceFieldEnum}
 
-    def impact(self, cnt, field, mode):
+    def impact(self, cnt: int, field: ProvinceFieldEnum, mode: int) -> int:
         return cnt * self._impact[field][mode]
 
 
