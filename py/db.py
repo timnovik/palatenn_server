@@ -19,7 +19,7 @@ class DB:
             res[state.id] = state
         return res
 
-    def write_states(self, data: dict[int, State]):
+    def write_states(self, data: dict[int, State]) -> None:
         with open(self.db_path + "/new/" + STATE_PATH, "w") as db:
             for state in data.values():
                 print(state.save(), file=db)
@@ -73,19 +73,37 @@ class DB:
     def commit_provinces(self) -> None:
         rename(self.db_path + "/new/" + PROVINCE_PATH,  self.db_path + "/" + PROVINCE_PATH)
 
-    def load(self) -> None:
+    def load_actions(self) -> dict[int, Action]:
+        res = dict()
+        for line in open(self.db_path + "/" + ACTION_PATH, "r"):
+            action = Action.load(line)
+            res[action.data.id] = action
+        return res
+
+    def write_actions(self, data: dict[int, Action]) -> None:
+        with open(self.db_path + "/new/" + ACTION_PATH, "w") as db:
+            for action in data.values():
+                print(action.save(), file=db)
+
+    def commit_actions(self) -> None:
+        rename(self.db_path + "/new/" + ACTION_PATH, self.db_path + "/" + ACTION_PATH)
+
+    def load(self) -> tuple[dict[int, State], dict[int, TradeRegion], dict[int, Province], dict[int, Action]]:
         states = self.load_states()
         regions = self.load_regions()
         provinces = self.load_provinces(states, regions)
-        return states, regions, provinces
+        actions = self.load_actions()
+        return states, regions, provinces, actions
 
-    def write(self, states: dict[int, State], regions: dict[int, TradeRegion], provinces: dict[int, Province]) -> None:
+    def write(self, states: dict[int, State], regions: dict[int, TradeRegion], provinces: dict[int, Province], actions: dict[int, Action]) -> None:
         self.write_states(states)
         self.write_regions(regions)
         self.write_provinces(provinces)
+        self.write_actions(actions)
         self.commit()
 
     def commit(self) -> None:
         self.commit_states()
         self.commit_regions()
         self.commit_provinces()
+        self.commit_actions()

@@ -53,7 +53,7 @@ def admin():
                             msg += str(province) + "<br>"
 
                 elif s_query[0] == "actions":
-                    for action in controller.actions:
+                    for action in controller.actions.values():
                             msg += str(action) + "<br>"
 
                 elif s_query[0] == "spent":

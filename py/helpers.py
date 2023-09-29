@@ -14,6 +14,7 @@ DB_PATH = "data"
 PROVINCE_PATH = "provinces.csv"
 STATE_PATH = "states.csv"
 REGION_PATH = "regions.csv"
+ACTION_PATH = "actions.csv"
 
 # ACCURACY CONFIG
 ACC = 100      # точность вычисления процентных модификаторов
@@ -76,6 +77,12 @@ class BuildingEnum(Enum):
 
 
 class ActionData:
+    def load(data: str) -> str:
+        return Self
+
+    def save(self) -> str:
+        return ""
+
     def __init__(self, id: int) -> Self:
         self.id = id
 
@@ -119,6 +126,14 @@ class Cost:
 
 
 class BuildActionData(ActionData):
+    def load(data: str) -> Self:
+        s = data.split(SEP)
+        build_type = BuildingEnum(s[0])
+        cnt = int(s[1])
+        prov_id = int(s[2])
+        id_ = int(s[3])
+        return BuildActionData(build_type, cnt, prov_id, id_)
+
     def __init__(self, build_type: BuildingEnum, count: int, province_id: int, id: int = -1) -> Self:
         ActionData.__init__(self, id)
         self.build_type = build_type
@@ -129,10 +144,31 @@ class BuildActionData(ActionData):
         return BUILDINGS[self.build_type].cost * self.count
 
     def save(self) -> str:
-        return SEP.join([self.build_type.name, str(self.count), str(self.province_id)])
+        return SEP.join([self.build_type.name, str(self.count), str(self.province_id), str(self.id)])
 
     def __str__(self) -> str:
         return f"{self.id}: {self.count}*{self.build_type} in prov #{self.province_id}"
+
+    def __repr__(self) -> str:
+        return str(self)
+
+
+class Action:
+    def load(data: str) -> str:
+        name = ActionEnum(data[:data.find(SEP)])
+        if name == ActionEnum.build:
+            action_data = BuildActionData.load(data[data.find(SEP) + 1:])
+        return Action(name, action_data)
+
+    def __init__(self, action_type: ActionEnum, action_data: ActionData) -> Self:
+        self.type = action_type
+        self.data = action_data
+
+    def save(self) -> str:
+        return SEP.join([self.type.name, self.data.save()]) + SEP
+
+    def __str__(self) -> str:
+        return f"{self.type} #{self.data}"
 
     def __repr__(self) -> str:
         return str(self)
