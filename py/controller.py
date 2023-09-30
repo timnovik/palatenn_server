@@ -51,7 +51,7 @@ class Controller:
                 return status, index
             for state in self.states.values():
                 state.money -= self._costs[state.id]
-            for id_, action in self.actions.items():
+            for action in self.actions.values():
                 if action.type == ActionEnum.build:
                     self.provinces[action.data.province_id].buildings += action.data.build_type * action.data.count
             self.clear()
